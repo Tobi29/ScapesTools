@@ -38,7 +38,6 @@ public class TagEditor {
                 .addListener(SWT.Selection, event -> fileOpenDirectory());
     }
 
-    @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
         Display.setAppName("Scapes Tag Editor");
         Display display = Display.getDefault();
