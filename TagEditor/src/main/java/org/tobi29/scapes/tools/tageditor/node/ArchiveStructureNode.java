@@ -72,7 +72,7 @@ public class ArchiveStructureNode extends AbstractStructureNode {
         nameField.setText(name);
         dialog.show(() -> {
             String name = nameField.toPlainText();
-            if (!this.name.equals(name) && checkValidName(name)) {
+            if (!this.name.equals(name) && checkValidRename(name)) {
                 parent.tagArchive.moveTagStructure(this.name, name);
                 this.name = name;
                 node.setText(0, name);
@@ -87,7 +87,7 @@ public class ArchiveStructureNode extends AbstractStructureNode {
         parent.changed();
     }
 
-    protected boolean checkValidName(String name) {
+    protected boolean checkValidRename(String name) {
         if (parent.tagArchive.hasTagStructure(name)) {
             QMessageBox.warning(node.treeWidget(), "Failed to rename",
                     name + " already exists!");

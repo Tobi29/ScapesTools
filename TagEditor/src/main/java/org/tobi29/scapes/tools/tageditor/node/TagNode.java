@@ -222,7 +222,7 @@ public class TagNode extends Node {
         nameField.setText(name);
         dialog.show(() -> {
             String name = nameField.toPlainText();
-            if (!this.name.equals(name) && checkValidName(name)) {
+            if (!this.name.equals(name) && checkValidRename(name)) {
                 parent.tagStructure.move(this.name, name);
                 this.name = name;
                 node.setText(0, name);
@@ -242,7 +242,7 @@ public class TagNode extends Node {
         node.setText(2, type(value));
     }
 
-    protected boolean checkValidName(String name) {
+    protected boolean checkValidRename(String name) {
         if (parent.tagStructure.has(name)) {
             QMessageBox.warning(node.treeWidget(), "Failed to rename",
                     name + " already exists!");

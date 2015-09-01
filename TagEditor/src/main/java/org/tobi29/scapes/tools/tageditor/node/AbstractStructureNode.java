@@ -88,6 +88,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(0, 1);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             boolean value = valueField.value() > 0;
             tagStructure.setBoolean(name, value);
             new TagNode(this, name, value);
@@ -102,6 +105,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(Byte.MIN_VALUE, Byte.MAX_VALUE);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             byte value = (byte) valueField.value();
             tagStructure.setByte(name, value);
             new TagNode(this, name, value);
@@ -117,6 +123,9 @@ public abstract class AbstractStructureNode extends Node {
         dialog.show(() -> {
             try {
                 String name = nameField.toPlainText();
+                if (!checkValidAdd(name)) {
+                    return;
+                }
                 byte[] value =
                         ArrayUtil.fromHexadecimal(valueField.toPlainText());
                 tagStructure.setByteArray(name, value);
@@ -136,6 +145,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(Short.MIN_VALUE, Short.MAX_VALUE);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             short value = (short) valueField.value();
             tagStructure.setShort(name, value);
             new TagNode(this, name, value);
@@ -150,6 +162,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             int value = valueField.value();
             tagStructure.setInteger(name, value);
             new TagNode(this, name, value);
@@ -164,6 +179,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             long value = valueField.value();
             tagStructure.setLong(name, value);
             new TagNode(this, name, value);
@@ -179,6 +197,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(Float.MIN_VALUE, Float.MAX_VALUE);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             float value = (float) valueField.value();
             tagStructure.setFloat(name, value);
             new TagNode(this, name, value);
@@ -194,6 +215,9 @@ public abstract class AbstractStructureNode extends Node {
         valueField.setRange(Double.MIN_VALUE, Double.MAX_VALUE);
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             double value = valueField.value();
             tagStructure.setDouble(name, value);
             new TagNode(this, name, value);
@@ -208,10 +232,22 @@ public abstract class AbstractStructureNode extends Node {
         QTextEdit valueField = dialog.add("Value", new QTextEdit());
         dialog.show(() -> {
             String name = nameField.toPlainText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
             String value = valueField.toPlainText();
             tagStructure.setString(name, value);
             new TagNode(this, name, value);
             changed();
         });
+    }
+
+    protected boolean checkValidAdd(String name) {
+        if (tagStructure.has(name)) {
+            QMessageBox.warning(node.treeWidget(), "Failed to add",
+                    name + " already exists!");
+            return false;
+        }
+        return true;
     }
 }
