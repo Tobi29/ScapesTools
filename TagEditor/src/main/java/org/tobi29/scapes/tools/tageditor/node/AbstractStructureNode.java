@@ -15,15 +15,14 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import com.trolltech.qt.gui.QDoubleSpinBox;
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QSpinBox;
-import com.trolltech.qt.gui.QTextEdit;
+import com.trolltech.qt.gui.*;
 import org.tobi29.scapes.engine.qt.util.InputDialog;
+import org.tobi29.scapes.engine.utils.ArrayUtil;
 import org.tobi29.scapes.engine.utils.Pair;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +71,7 @@ public abstract class AbstractStructureNode extends Node {
         QMenu addMenu = menu.addMenu("Add");
         addMenu.addAction("Boolean", this, "addBoolean()");
         addMenu.addAction("Byte", this, "addByte()");
-        // TODO: Add byte array add
+        addMenu.addAction("Byte[]", this, "addByteArray()");
         addMenu.addAction("Int16", this, "addInt16()");
         addMenu.addAction("Int32", this, "addInt32()");
         addMenu.addAction("Int64", this, "addInt64()");
@@ -107,6 +106,26 @@ public abstract class AbstractStructureNode extends Node {
             tagStructure.setByte(name, value);
             new TagNode(this, name, value);
             changed();
+        });
+    }
+
+    private void addByteArray() {
+        InputDialog dialog =
+                new InputDialog(node.treeWidget(), "Set Byte[]...");
+        QTextEdit nameField = dialog.add("Name", new QTextEdit());
+        QTextEdit valueField = dialog.add("Value", new QTextEdit());
+        dialog.show(() -> {
+            try {
+                String name = nameField.toPlainText();
+                byte[] value =
+                        ArrayUtil.fromHexadecimal(valueField.toPlainText());
+                tagStructure.setByteArray(name, value);
+                new TagNode(this, name, value);
+                changed();
+            } catch (IOException e) {
+                QMessageBox.warning(node.treeWidget(), "Failed to set",
+                        "Invalid byte array:\n" + e.toString());
+            }
         });
     }
 

@@ -21,6 +21,8 @@ import org.tobi29.scapes.engine.utils.ArrayUtil;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
+import java.io.IOException;
+
 public class TagNode extends Node {
     protected final AbstractStructureNode parent;
     protected String name;
@@ -121,10 +123,16 @@ public class TagNode extends Node {
         valueField.setText(ArrayUtil
                 .toHexadecimal(1, parent.tagStructure.getByteArray(name)));
         dialog.show(() -> {
-            String value = valueField.toPlainText();
-            parent.tagStructure.setString(name, value);
-            setValue(value);
-            parent.changed();
+            try {
+                byte[] value =
+                        ArrayUtil.fromHexadecimal(valueField.toPlainText());
+                parent.tagStructure.setByteArray(name, value);
+                setValue(value);
+                parent.changed();
+            } catch (IOException e) {
+                QMessageBox.warning(node.treeWidget(), "Failed to set",
+                        "Invalid byte array:\n" + e.toString());
+            }
         });
     }
 
