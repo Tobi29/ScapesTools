@@ -15,37 +15,34 @@
  */
 package org.tobi29.scapes.tools.tageditor.ui;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import com.trolltech.qt.gui.QTreeWidget;
+import com.trolltech.qt.gui.QTreeWidgetItem;
 import org.tobi29.scapes.tools.tageditor.node.Node;
 
-public class TreeNode extends TreeItem {
+public class TreeNode extends QTreeWidgetItem {
     public Node node;
 
-    public TreeNode(TreeItem parent, String name, String type) {
-        super(parent, SWT.NONE);
+    public TreeNode(QTreeWidgetItem parent, String name, String type) {
+        super(parent);
         setText(0, name);
         setText(2, type);
     }
 
-    public TreeNode(TreeItem parent, String name, String value, String type) {
+    public TreeNode(QTreeWidgetItem parent, String name, String value,
+            String type) {
         this(parent, name, type);
         setText(1, value);
     }
 
-    public TreeNode(Tree parent, String name, String type) {
-        super(parent, SWT.NONE);
+    public TreeNode(QTreeWidget parent, String name, String type) {
+        super(parent);
         setText(0, name);
         setText(2, type);
     }
 
-    public TreeNode(Tree parent, String name, String value, String type) {
+    public TreeNode(QTreeWidget parent, String name, String value,
+            String type) {
         this(parent, name, type);
         setText(1, value);
-    }
-
-    @Override
-    protected void checkSubclass() {
     }
 }

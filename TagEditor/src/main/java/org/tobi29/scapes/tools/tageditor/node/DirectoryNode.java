@@ -15,7 +15,8 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
+import com.trolltech.qt.gui.QMenu;
+import com.trolltech.qt.gui.QStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
@@ -50,8 +51,8 @@ public class DirectoryNode extends Node {
     private DirectoryNode(TreeNode node, Path path) {
         super(node);
         this.path = path;
-        //node.setIcon(0, node.treeWidget().style()
-        //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
+        node.setIcon(0, node.treeWidget().style()
+                .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
     public void init() {
@@ -90,6 +91,6 @@ public class DirectoryNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(QMenu menu) {
     }
 }

@@ -15,14 +15,12 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Text;
+import com.trolltech.qt.gui.QMenu;
+import com.trolltech.qt.gui.QMessageBox;
+import com.trolltech.qt.gui.QTextEdit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tobi29.scapes.engine.swt.util.Dialogs;
-import org.tobi29.scapes.engine.swt.util.InputDialog;
+import org.tobi29.scapes.engine.qt.util.InputDialog;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
@@ -56,30 +54,24 @@ public class ArchiveStructureNode extends AbstractStructureNode {
         try {
             parent.tagArchive.setTagStructure(name, tagStructure);
         } catch (IOException e) {
-            Dialogs.openMessage(node.getParent().getShell(), SWT.ICON_ERROR,
-                    "Failed to update archive",
+            QMessageBox.warning(node.treeWidget(), "Archive update",
                     "Failed to update archive entry:\n" + e.getMessage());
         }
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(QMenu menu) {
         super.rightClick(menu);
-        MenuItem rename = new MenuItem(menu, SWT.PUSH);
-        rename.setText("Rename");
-        rename.addListener(SWT.Selection, event -> rename());
-        MenuItem delete = new MenuItem(menu, SWT.PUSH);
-        delete.setText("Delete");
-        delete.addListener(SWT.Selection, event -> delete());
+        menu.addAction("Rename", this, "rename()");
+        menu.addAction("Delete", this, "delete()");
     }
 
     private void rename() {
-        InputDialog dialog =
-                new InputDialog(node.getParent().getShell(), "Rename...");
-        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        InputDialog dialog = new InputDialog(node.treeWidget(), "Rename...");
+        QTextEdit nameField = dialog.add("Name", new QTextEdit());
         nameField.setText(name);
-        dialog.open(() -> {
-            String name = nameField.getText();
+        dialog.show(() -> {
+            String name = nameField.toPlainText();
             if (!this.name.equals(name) && checkValidName(name)) {
                 parent.tagArchive.moveTagStructure(this.name, name);
                 this.name = name;
@@ -91,14 +83,14 @@ public class ArchiveStructureNode extends AbstractStructureNode {
 
     private void delete() {
         parent.tagArchive.removeTagStructure(name);
-        node.dispose();
+        parent.node.removeChild(node);
         parent.changed();
     }
 
     protected boolean checkValidName(String name) {
         if (parent.tagArchive.hasTagStructure(name)) {
-            Dialogs.openMessage(node.getParent().getShell(), SWT.ICON_WARNING,
-                    "Failed to rename", name + " already exists!");
+            QMessageBox.warning(node.treeWidget(), "Failed to rename",
+                    name + " already exists!");
             return false;
         }
         return true;

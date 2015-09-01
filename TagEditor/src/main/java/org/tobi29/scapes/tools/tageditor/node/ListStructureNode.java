@@ -15,6 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
+import com.trolltech.qt.gui.QStyle;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
@@ -36,8 +37,8 @@ public class ListStructureNode extends AbstractStructureNode {
         super(node, String.valueOf(index));
         this.parent = parent;
         this.index = index;
-        //node.setIcon(0, node.treeWidget().style()
-        //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
+        node.setIcon(0, node.treeWidget().style()
+                .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
     @Override

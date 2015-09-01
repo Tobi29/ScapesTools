@@ -15,7 +15,8 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
+import com.trolltech.qt.gui.QMenu;
+import com.trolltech.qt.gui.QStyle;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
@@ -36,8 +37,8 @@ public class FileUnknownNode extends Node {
     private FileUnknownNode(TreeNode node, Path path) {
         super(node);
         this.path = path;
-        //node.setIcon(0, node.treeWidget().style()
-        //        .standardIcon(QStyle.StandardPixmap.SP_FileIcon));
+        node.setIcon(0, node.treeWidget().style()
+                .standardIcon(QStyle.StandardPixmap.SP_FileIcon));
     }
 
     @Override
@@ -45,6 +46,6 @@ public class FileUnknownNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(QMenu menu) {
     }
 }

@@ -15,34 +15,22 @@
  */
 package org.tobi29.scapes.tools.tageditor.ui;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
+import com.trolltech.qt.gui.QAction;
+import com.trolltech.qt.gui.QMainWindow;
+import com.trolltech.qt.gui.QMenu;
+import com.trolltech.qt.gui.QMenuBar;
 
-public class TagEditorWindow extends Shell {
-    public final MenuItem fileOpenFile, fileOpenDirectory;
+public class TagEditorWindow extends QMainWindow {
+    public final QAction fileOpenFile, fileOpenDirectory;
     public final TagEditorWidget editorWidget;
 
-    public TagEditorWindow(Display display, int style) {
-        super(display, style);
-        setLayout(new FillLayout());
-        editorWidget = new TagEditorWidget(this, SWT.NONE);
-        Menu menu = new Menu(this, SWT.BAR);
-        setMenuBar(menu);
-        MenuItem file = new MenuItem(menu, SWT.CASCADE);
-        file.setText("File");
-        Menu fileMenu = new Menu(file);
-        file.setMenu(fileMenu);
-        fileOpenFile = new MenuItem(fileMenu, SWT.PUSH);
-        fileOpenFile.setText("Open File...");
-        fileOpenDirectory = new MenuItem(fileMenu, SWT.PUSH);
-        fileOpenDirectory.setText("Open Directory...");
-    }
-
-    @Override
-    protected void checkSubclass() {
+    public TagEditorWindow() {
+        editorWidget = new TagEditorWidget();
+        setCentralWidget(editorWidget);
+        setWindowTitle("Tag Editor");
+        QMenuBar menuBar = menuBar();
+        QMenu fileMenu = menuBar.addMenu("File");
+        fileOpenFile = fileMenu.addAction("Open File...");
+        fileOpenDirectory = fileMenu.addAction("Open Directory...");
     }
 }
