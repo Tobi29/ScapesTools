@@ -31,15 +31,15 @@ application {
 dependencies {
     compile project(":ScapesEngine:Utils")
     compile project(":ScapesEngine:Utils:QtUtils")
-    compile "org.slf4j:slf4j-api:1.7.10"
+    compile "org.slf4j:slf4j-api:1.7.12"
 
     provided qtJambiWindows32
 
     testCompile "junit:junit:4.12"
 
-    runtime "org.apache.logging.log4j:log4j-api:2.1"
-    runtime "org.apache.logging.log4j:log4j-core:2.1"
-    runtime "org.apache.logging.log4j:log4j-slf4j-impl:2.1"
+    runtime "org.apache.logging.log4j:log4j-api:2.3"
+    runtime "org.apache.logging.log4j:log4j-core:2.3"
+    runtime "org.apache.logging.log4j:log4j-slf4j-impl:2.3"
 
     runtimeLinux32 qtJambiLinux32
     nativesLinux32 qtJambiLinux32Natives
