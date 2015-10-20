@@ -15,52 +15,50 @@
  */
 package org.tobi29.scapes.tools.tageditor;
 
-import com.trolltech.qt.gui.QApplication;
-import com.trolltech.qt.gui.QFileDialog;
-import com.trolltech.qt.gui.QTreeWidgetItem;
-import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 import org.tobi29.scapes.tools.tageditor.node.DirectoryNode;
-import org.tobi29.scapes.tools.tageditor.node.FileArchiveNode;
-import org.tobi29.scapes.tools.tageditor.node.FileStructureNode;
-import org.tobi29.scapes.tools.tageditor.node.FileUnknownNode;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWindow;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 public class TagEditor {
     private final TagEditorWindow shell;
 
-    public TagEditor() {
-        shell = new TagEditorWindow();
-        shell.editorWidget.itemExpanded
-                .connect(this, "expanded(QTreeWidgetItem)");
-        shell.fileOpenFile.triggered.connect(this, "fileOpenFile()");
-        shell.fileOpenDirectory.triggered.connect(this, "fileOpenDirectory()");
-        shell.resize(640, 480);
+    public TagEditor(Display display) {
+        shell = new TagEditorWindow(display, SWT.SHELL_TRIM);
+        shell.editorWidget
+                .addListener(SWT.Expand, event -> expanded(event.item));
+        //shell.fileOpenFile.addListener(SWT.Selection, event -> fileOpenFile());
+        shell.fileOpenDirectory
+                .addListener(SWT.Selection, event -> fileOpenDirectory());
     }
 
-    @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
-        QApplication.initialize("Scapes Tag Editor", args);
-        new TagEditor().run();
-        QApplication.shutdown();
-        System.exit(0);
+        Display.setAppName("Scapes Tag Editor");
+        Display display = Display.getDefault();
+        new TagEditor(display).run();
     }
 
     public void run() {
-        shell.show();
-        QApplication.execStatic();
+        shell.open();
+        Display display = shell.getDisplay();
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch()) {
+                display.sleep();
+            }
+        }
     }
 
-    public void expanded(QTreeWidgetItem item) {
+    public void expanded(Widget item) {
         ((TreeNode) item).node.expand();
-        shell.editorWidget.resizeColumnToContents(0);
     }
 
-    public void fileOpenFile() {
+    /*public void fileOpenFile() {
         String file = QFileDialog.getOpenFileName(shell, "Open File...", "",
                 new QFileDialog.Filter("Tag Structure (*.stag *.json *.xml)"));
         if (file.isEmpty()) {
@@ -79,15 +77,16 @@ public class TagEditor {
                 new FileUnknownNode(shell.editorWidget, path);
             }
         }
-    }
+    }*/
 
     public void fileOpenDirectory() {
-        String file =
-                QFileDialog.getExistingDirectory(shell, "Open Directory...");
-        if (file.isEmpty()) {
+        DirectoryDialog dialog = new DirectoryDialog(shell);
+        dialog.setMessage("Open Directory...");
+        String file = dialog.open();
+        if (file == null) {
             return;
         }
-        shell.editorWidget.clear();
+        shell.editorWidget.removeAll();
         Path path = Paths.get(file);
         new DirectoryNode(shell.editorWidget, path).init();
     }

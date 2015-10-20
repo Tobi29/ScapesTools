@@ -15,8 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QStyle;
+import org.eclipse.swt.widgets.Menu;
 import org.tobi29.scapes.engine.utils.Pair;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
@@ -29,7 +28,6 @@ public class ListNode extends Node {
     protected final List<Pair<ListStructureNode, TagStructure>>
             childStructures = new ArrayList<>();
     protected final AbstractStructureNode parent;
-    protected List<TagStructure> tagStructures;
     protected String name;
 
     public ListNode(AbstractStructureNode parent, String name) {
@@ -45,12 +43,12 @@ public class ListNode extends Node {
         super(node);
         this.parent = parent;
         this.name = name;
-        node.setIcon(0, node.treeWidget().style()
-                .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
+        //node.setIcon(0, node.treeWidget().style()
+        //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
-    public void init(TagStructure.StructureList tagStructures) {
-        this.tagStructures = tagStructures;
+    public void init() {
+        List<TagStructure> tagStructures = parent.tagStructure.getList(name);
         for (int i = 0; i < tagStructures.size(); i++) {
             childStructures.add(new Pair<>(new ListStructureNode(this, i),
                     tagStructures.get(i)));
@@ -68,7 +66,7 @@ public class ListNode extends Node {
     }
 
     @Override
-    public void rightClick(QMenu menu) {
+    public void rightClick(Menu menu) {
         // TODO: Add right-click menu
     }
 }

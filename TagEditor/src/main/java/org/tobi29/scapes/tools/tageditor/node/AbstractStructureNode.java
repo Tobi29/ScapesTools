@@ -15,8 +15,13 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import com.trolltech.qt.gui.*;
-import org.tobi29.scapes.engine.qt.util.InputDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
+import org.tobi29.scapes.engine.swt.util.Dialogs;
+import org.tobi29.scapes.engine.swt.util.InputDialog;
 import org.tobi29.scapes.engine.utils.ArrayUtil;
 import org.tobi29.scapes.engine.utils.Pair;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
@@ -24,13 +29,14 @@ import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractStructureNode extends Node {
     protected final String name;
     protected final List<Pair<AbstractStructureNode, TagStructure>>
             childStructures = new ArrayList<>();
-    protected final List<Pair<ListNode, TagStructure.StructureList>>
+    protected final List<ListNode>
             childLists = new ArrayList<>();
     protected TagStructure tagStructure;
 
@@ -48,8 +54,7 @@ public abstract class AbstractStructureNode extends Node {
                         .add(new Pair<>(new StructureNode(this, entry.getKey()),
                                 (TagStructure) value));
             } else if (value instanceof TagStructure.StructureList) {
-                childLists.add(new Pair<>(new ListNode(this, entry.getKey()),
-                        (TagStructure.StructureList) value));
+                childLists.add(new ListNode(this, entry.getKey()));
             } else {
                 new TagNode(this, entry.getKey(), value);
             }
@@ -61,37 +66,95 @@ public abstract class AbstractStructureNode extends Node {
     @Override
     public void expand() {
         childStructures.forEach(pair -> pair.a.init(pair.b));
-        childLists.forEach(pair -> pair.a.init(pair.b));
+        childLists.forEach(ListNode::init);
         childStructures.clear();
         childLists.clear();
     }
 
     @Override
-    public void rightClick(QMenu menu) {
-        QMenu addMenu = menu.addMenu("Add");
-        addMenu.addAction("Boolean", this, "addBoolean()");
-        addMenu.addAction("Byte", this, "addByte()");
-        addMenu.addAction("Byte[]", this, "addByteArray()");
-        addMenu.addAction("Int16", this, "addInt16()");
-        addMenu.addAction("Int32", this, "addInt32()");
-        addMenu.addAction("Int64", this, "addInt64()");
-        addMenu.addAction("Float32", this, "addFloat32()");
-        addMenu.addAction("Float64", this, "addFloat64()");
-        addMenu.addAction("String", this, "addString()");
+    public void rightClick(Menu menu) {
+        MenuItem add = new MenuItem(menu, SWT.CASCADE);
+        add.setText("Add");
+        Menu addMenu = new Menu(add);
+        add.setMenu(addMenu);
+        MenuItem addStructure = new MenuItem(addMenu, SWT.PUSH);
+        addStructure.setText("Structure");
+        addStructure.addListener(SWT.Selection, event -> addStructure());
+        MenuItem addList = new MenuItem(addMenu, SWT.PUSH);
+        addList.setText("List");
+        addList.addListener(SWT.Selection, event -> addList());
+        MenuItem addBoolean = new MenuItem(addMenu, SWT.PUSH);
+        addBoolean.setText("Boolean");
+        addBoolean.addListener(SWT.Selection, event -> addBoolean());
+        MenuItem addByte = new MenuItem(addMenu, SWT.PUSH);
+        addByte.setText("Byte...");
+        addByte.addListener(SWT.Selection, event -> addByte());
+        MenuItem addByteArray = new MenuItem(addMenu, SWT.PUSH);
+        addByteArray.setText("Byte[]...");
+        addByteArray.addListener(SWT.Selection, event -> addByteArray());
+        MenuItem addInt16 = new MenuItem(addMenu, SWT.PUSH);
+        addInt16.setText("Int16");
+        addInt16.addListener(SWT.Selection, event -> addInt16());
+        MenuItem addInt32 = new MenuItem(addMenu, SWT.PUSH);
+        addInt32.setText("Int32");
+        addInt32.addListener(SWT.Selection, event -> addInt32());
+        MenuItem addInt64 = new MenuItem(addMenu, SWT.PUSH);
+        addInt64.setText("Int64");
+        addInt64.addListener(SWT.Selection, event -> addInt64());
+        MenuItem addFloat32 = new MenuItem(addMenu, SWT.PUSH);
+        addFloat32.setText("Float32");
+        addFloat32.addListener(SWT.Selection, event -> addFloat32());
+        MenuItem addFloat64 = new MenuItem(addMenu, SWT.PUSH);
+        addFloat64.setText("Float64");
+        addFloat64.addListener(SWT.Selection, event -> addFloat64());
+        MenuItem addString = new MenuItem(addMenu, SWT.PUSH);
+        addString.setText("String");
+        addString.addListener(SWT.Selection, event -> addString());
+    }
+
+    private void addStructure() {
+        InputDialog dialog = new InputDialog(node.getParent().getShell(),
+                "Add Structure...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
+            String name = nameField.getText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
+            tagStructure.getStructure(name);
+            new StructureNode(this, name).init(tagStructure);
+            changed();
+        });
+    }
+
+    private void addList() {
+        InputDialog dialog =
+                new InputDialog(node.getParent().getShell(), "Add List...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
+            String name = nameField.getText();
+            if (!checkValidAdd(name)) {
+                return;
+            }
+            tagStructure.setList(name, Collections.emptyList());
+            new ListNode(this, name).init();
+            changed();
+        });
     }
 
     private void addBoolean() {
         InputDialog dialog =
-                new InputDialog(node.treeWidget(), "Set Boolean...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QSpinBox valueField = dialog.add("Value", new QSpinBox());
-        valueField.setRange(0, 1);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
+                new InputDialog(node.getParent().getShell(), "Add Boolean...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Spinner valueField = dialog.add("Value", p -> new Spinner(p, SWT.NONE));
+        valueField.setMinimum(0);
+        valueField.setMaximum(1);
+        dialog.open(() -> {
+            String name = nameField.getText();
             if (!checkValidAdd(name)) {
                 return;
             }
-            boolean value = valueField.value() > 0;
+            boolean value = valueField.getSelection() != 0;
             tagStructure.setBoolean(name, value);
             new TagNode(this, name, value);
             changed();
@@ -99,16 +162,18 @@ public abstract class AbstractStructureNode extends Node {
     }
 
     private void addByte() {
-        InputDialog dialog = new InputDialog(node.treeWidget(), "Set Byte...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QSpinBox valueField = dialog.add("Value", new QSpinBox());
-        valueField.setRange(Byte.MIN_VALUE, Byte.MAX_VALUE);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
+        InputDialog dialog =
+                new InputDialog(node.getParent().getShell(), "Add Byte...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Spinner valueField = dialog.add("Value", p -> new Spinner(p, SWT.NONE));
+        valueField.setMinimum(Byte.MIN_VALUE);
+        valueField.setMaximum(Byte.MAX_VALUE);
+        dialog.open(() -> {
+            String name = nameField.getText();
             if (!checkValidAdd(name)) {
                 return;
             }
-            byte value = (byte) valueField.value();
+            byte value = (byte) valueField.getSelection();
             tagStructure.setByte(name, value);
             new TagNode(this, name, value);
             changed();
@@ -117,38 +182,40 @@ public abstract class AbstractStructureNode extends Node {
 
     private void addByteArray() {
         InputDialog dialog =
-                new InputDialog(node.treeWidget(), "Set Byte[]...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QTextEdit valueField = dialog.add("Value", new QTextEdit());
-        dialog.show(() -> {
+                new InputDialog(node.getParent().getShell(), "Add Byte[]...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Text valueField = dialog.add("Value", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
             try {
-                String name = nameField.toPlainText();
+                String name = nameField.getText();
                 if (!checkValidAdd(name)) {
                     return;
                 }
-                byte[] value =
-                        ArrayUtil.fromHexadecimal(valueField.toPlainText());
+                byte[] value = ArrayUtil.fromHexadecimal(valueField.getText());
                 tagStructure.setByteArray(name, value);
                 new TagNode(this, name, value);
                 changed();
             } catch (IOException e) {
-                QMessageBox.warning(node.treeWidget(), "Failed to set",
-                        "Invalid byte array:\n" + e.toString());
+                Dialogs.openMessage(node.getParent().getShell(),
+                        SWT.ICON_WARNING, "Failed to set value",
+                        "Unable to parse array:\n" + e.getMessage());
             }
         });
     }
 
     private void addInt16() {
-        InputDialog dialog = new InputDialog(node.treeWidget(), "Set Int16...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QSpinBox valueField = dialog.add("Value", new QSpinBox());
-        valueField.setRange(Short.MIN_VALUE, Short.MAX_VALUE);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
+        InputDialog dialog =
+                new InputDialog(node.getParent().getShell(), "Add Int16...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Spinner valueField = dialog.add("Value", p -> new Spinner(p, SWT.NONE));
+        valueField.setMinimum(Short.MIN_VALUE);
+        valueField.setMaximum(Short.MAX_VALUE);
+        dialog.open(() -> {
+            String name = nameField.getText();
             if (!checkValidAdd(name)) {
                 return;
             }
-            short value = (short) valueField.value();
+            short value = (short) valueField.getSelection();
             tagStructure.setShort(name, value);
             new TagNode(this, name, value);
             changed();
@@ -156,16 +223,18 @@ public abstract class AbstractStructureNode extends Node {
     }
 
     private void addInt32() {
-        InputDialog dialog = new InputDialog(node.treeWidget(), "Set Int32...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QSpinBox valueField = dialog.add("Value", new QSpinBox());
-        valueField.setRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
+        InputDialog dialog =
+                new InputDialog(node.getParent().getShell(), "Add Int32...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Spinner valueField = dialog.add("Value", p -> new Spinner(p, SWT.NONE));
+        valueField.setMinimum(Integer.MIN_VALUE);
+        valueField.setMaximum(Integer.MAX_VALUE);
+        dialog.open(() -> {
+            String name = nameField.getText();
             if (!checkValidAdd(name)) {
                 return;
             }
-            int value = valueField.value();
+            int value = valueField.getSelection();
             tagStructure.setInteger(name, value);
             new TagNode(this, name, value);
             changed();
@@ -173,69 +242,85 @@ public abstract class AbstractStructureNode extends Node {
     }
 
     private void addInt64() {
-        InputDialog dialog = new InputDialog(node.treeWidget(), "Set Int64...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QSpinBox valueField = dialog.add("Value", new QSpinBox());
-        valueField.setRange(Integer.MIN_VALUE, Integer.MAX_VALUE);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
-            if (!checkValidAdd(name)) {
-                return;
+        InputDialog dialog =
+                new InputDialog(node.getParent().getShell(), "Add Int64...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Text valueField = dialog.add("Value", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
+            try {
+                String name = nameField.getText();
+                if (!checkValidAdd(name)) {
+                    return;
+                }
+                long value = Long.parseLong(valueField.getText());
+                tagStructure.setLong(name, value);
+                new TagNode(this, name, value);
+                changed();
+            } catch (NumberFormatException e) {
+                Dialogs.openMessage(node.getParent().getShell(),
+                        SWT.ICON_WARNING, "Failed to set value",
+                        "Unable to parse array:\n" + e.getMessage());
             }
-            long value = valueField.value();
-            tagStructure.setLong(name, value);
-            new TagNode(this, name, value);
-            changed();
         });
     }
 
     private void addFloat32() {
         InputDialog dialog =
-                new InputDialog(node.treeWidget(), "Set Float32...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QDoubleSpinBox valueField = dialog.add("Value", new QDoubleSpinBox());
-        valueField.setRange(Float.MIN_VALUE, Float.MAX_VALUE);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
-            if (!checkValidAdd(name)) {
-                return;
+                new InputDialog(node.getParent().getShell(), "Add Float32...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Text valueField = dialog.add("Value", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
+            try {
+                String name = nameField.getText();
+                if (!checkValidAdd(name)) {
+                    return;
+                }
+                float value = Float.parseFloat(valueField.getText());
+                tagStructure.setFloat(name, value);
+                new TagNode(this, name, value);
+                changed();
+            } catch (NumberFormatException e) {
+                Dialogs.openMessage(node.getParent().getShell(),
+                        SWT.ICON_WARNING, "Failed to set value",
+                        "Unable to parse number:\n" + e.getMessage());
             }
-            float value = (float) valueField.value();
-            tagStructure.setFloat(name, value);
-            new TagNode(this, name, value);
-            changed();
         });
     }
 
     private void addFloat64() {
         InputDialog dialog =
-                new InputDialog(node.treeWidget(), "Set Float64...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QDoubleSpinBox valueField = dialog.add("Value", new QDoubleSpinBox());
-        valueField.setRange(Double.MIN_VALUE, Double.MAX_VALUE);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
-            if (!checkValidAdd(name)) {
-                return;
+                new InputDialog(node.getParent().getShell(), "Add Float64...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Text valueField = dialog.add("Value", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
+            try {
+                String name = nameField.getText();
+                if (!checkValidAdd(name)) {
+                    return;
+                }
+                double value = Double.parseDouble(valueField.getText());
+                tagStructure.setDouble(name, value);
+                new TagNode(this, name, value);
+                changed();
+            } catch (NumberFormatException e) {
+                Dialogs.openMessage(node.getParent().getShell(),
+                        SWT.ICON_WARNING, "Failed to set value",
+                        "Unable to parse number:\n" + e.getMessage());
             }
-            double value = valueField.value();
-            tagStructure.setDouble(name, value);
-            new TagNode(this, name, value);
-            changed();
         });
     }
 
     private void addString() {
         InputDialog dialog =
-                new InputDialog(node.treeWidget(), "Set String...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
-        QTextEdit valueField = dialog.add("Value", new QTextEdit());
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
+                new InputDialog(node.getParent().getShell(), "Add String...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
+        Text valueField = dialog.add("Value", p -> new Text(p, SWT.BORDER));
+        dialog.open(() -> {
+            String name = nameField.getText();
             if (!checkValidAdd(name)) {
                 return;
             }
-            String value = valueField.toPlainText();
+            String value = valueField.getText();
             tagStructure.setString(name, value);
             new TagNode(this, name, value);
             changed();
@@ -244,7 +329,8 @@ public abstract class AbstractStructureNode extends Node {
 
     protected boolean checkValidAdd(String name) {
         if (tagStructure.has(name)) {
-            QMessageBox.warning(node.treeWidget(), "Failed to add",
+            Dialogs.openMessage(node.getParent().getShell(),
+                    SWT.ICON_WARNING, "Failed to add",
                     name + " already exists!");
             return false;
         }

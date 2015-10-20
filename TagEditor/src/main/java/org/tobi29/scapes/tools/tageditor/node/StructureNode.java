@@ -15,11 +15,12 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QMessageBox;
-import com.trolltech.qt.gui.QStyle;
-import com.trolltech.qt.gui.QTextEdit;
-import org.tobi29.scapes.engine.qt.util.InputDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
+import org.tobi29.scapes.engine.swt.util.Dialogs;
+import org.tobi29.scapes.engine.swt.util.InputDialog;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
@@ -41,8 +42,8 @@ public class StructureNode extends AbstractStructureNode {
         super(node, name);
         this.parent = parent;
         this.name = name;
-        node.setIcon(0, node.treeWidget().style()
-                .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
+        //node.setIcon(0, node.treeWidget().style()
+        //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
     @Override
@@ -51,19 +52,24 @@ public class StructureNode extends AbstractStructureNode {
     }
 
     @Override
-    public void rightClick(QMenu menu) {
+    public void rightClick(Menu menu) {
         super.rightClick(menu);
-        menu.addAction("Rename", this, "rename()");
-        menu.addAction("Delete", this, "delete()");
+        MenuItem rename = new MenuItem(menu, SWT.PUSH);
+        rename.setText("Rename");
+        rename.addListener(SWT.Selection, event -> rename());
+        MenuItem delete = new MenuItem(menu, SWT.PUSH);
+        delete.setText("Delete");
+        delete.addListener(SWT.Selection, event -> delete());
     }
 
     private void rename() {
-        InputDialog dialog = new InputDialog(node.treeWidget(), "Rename...");
-        QTextEdit nameField = dialog.add("Name", new QTextEdit());
+        InputDialog dialog =
+                new InputDialog(node.getParent().getShell(), "Rename...");
+        Text nameField = dialog.add("Name", p -> new Text(p, SWT.BORDER));
         nameField.setText(name);
-        dialog.show(() -> {
-            String name = nameField.toPlainText();
-            if (!this.name.equals(name) && checkValidRename(name)) {
+        dialog.open(() -> {
+            String name = nameField.getText();
+            if (!this.name.equals(name) && checkValidName(name)) {
                 parent.tagStructure.move(this.name, name);
                 this.name = name;
                 node.setText(0, name);
@@ -74,14 +80,14 @@ public class StructureNode extends AbstractStructureNode {
 
     private void delete() {
         parent.tagStructure.remove(name);
-        parent.node.removeChild(node);
+        node.dispose();
         parent.changed();
     }
 
-    protected boolean checkValidRename(String name) {
+    protected boolean checkValidName(String name) {
         if (parent.tagStructure.has(name)) {
-            QMessageBox.warning(node.treeWidget(), "Failed to rename",
-                    name + " already exists!");
+            Dialogs.openMessage(node.getParent().getShell(), SWT.ICON_WARNING,
+                    "Failed to rename", name + " already exists!");
             return false;
         }
         return true;

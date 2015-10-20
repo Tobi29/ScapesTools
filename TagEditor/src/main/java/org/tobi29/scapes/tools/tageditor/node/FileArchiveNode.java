@@ -15,8 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import com.trolltech.qt.gui.QMenu;
-import com.trolltech.qt.gui.QStyle;
+import org.eclipse.swt.widgets.Menu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tobi29.scapes.engine.utils.Pair;
@@ -51,8 +50,8 @@ public class FileArchiveNode extends Node {
     private FileArchiveNode(TreeNode node, Path path) {
         super(node);
         this.path = path;
-        node.setIcon(0, node.treeWidget().style()
-                .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
+        //node.setIcon(0, node.treeWidget().style()
+        //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
     public static boolean archive(Path path) {
@@ -74,8 +73,8 @@ public class FileArchiveNode extends Node {
     }
 
     public void changed() {
-        node.setIcon(0, node.treeWidget().style()
-                .standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton));
+        //node.setIcon(0, node.treeWidget().style()
+        //        .standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton));
     }
 
     @Override
@@ -96,8 +95,7 @@ public class FileArchiveNode extends Node {
     }
 
     @Override
-    public void rightClick(QMenu menu) {
-        // Shell shell = editorWidget.getShell();
+    public void rightClick(Menu menu) {
         // TODO: Add right-click menu
     }
 }

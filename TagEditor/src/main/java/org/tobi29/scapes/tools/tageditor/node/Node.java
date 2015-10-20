@@ -15,7 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import com.trolltech.qt.gui.QMenu;
+import org.eclipse.swt.widgets.Menu;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
 public abstract class Node {
@@ -28,5 +28,5 @@ public abstract class Node {
 
     public abstract void expand();
 
-    public abstract void rightClick(QMenu menu);
+    public abstract void rightClick(Menu menu);
 }
