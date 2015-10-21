@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tobi29.scapes.engine.swt.util.Dialogs;
-import org.tobi29.scapes.engine.swt.util.InputDialog;
+import org.tobi29.scapes.engine.swt.util.widgets.Dialogs;
+import org.tobi29.scapes.engine.swt.util.widgets.InputDialog;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 

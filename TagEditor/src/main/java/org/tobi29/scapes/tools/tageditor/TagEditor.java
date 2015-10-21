@@ -17,8 +17,8 @@ package org.tobi29.scapes.tools.tageditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
+import org.tobi29.scapes.engine.swt.util.framework.Application;
 import org.tobi29.scapes.tools.tageditor.node.DirectoryNode;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWindow;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
@@ -26,10 +26,11 @@ import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class TagEditor {
+public class TagEditor extends Application {
     private final TagEditorWindow shell;
 
-    public TagEditor(Display display) {
+    public TagEditor() {
+        super("Scapes Tag Editor", "TagEditor", "0.0.0_1");
         shell = new TagEditorWindow(display, SWT.SHELL_TRIM);
         shell.editorWidget
                 .addListener(SWT.Expand, event -> expanded(event.item));
@@ -39,19 +40,16 @@ public class TagEditor {
     }
 
     public static void main(String[] args) {
-        Display.setAppName("Scapes Tag Editor");
-        Display display = Display.getDefault();
-        new TagEditor(display).run();
+        new TagEditor().run();
     }
 
-    public void run() {
+    @Override
+    protected void init() {
         shell.open();
-        Display display = shell.getDisplay();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
-            }
-        }
+    }
+
+    @Override
+    protected void dispose() {
     }
 
     public void expanded(Widget item) {
