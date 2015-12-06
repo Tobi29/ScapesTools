@@ -15,7 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.utils.Pair;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
@@ -66,7 +66,7 @@ public class ListNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
         // TODO: Add right-click menu
     }
 }

@@ -16,11 +16,10 @@
 package org.tobi29.scapes.tools.tageditor.node;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.tobi29.scapes.engine.swt.util.widgets.Dialogs;
 import org.tobi29.scapes.engine.swt.util.widgets.InputDialog;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
@@ -52,14 +51,10 @@ public class StructureNode extends AbstractStructureNode {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
         super.rightClick(menu);
-        MenuItem rename = new MenuItem(menu, SWT.PUSH);
-        rename.setText("Rename");
-        rename.addListener(SWT.Selection, event -> rename());
-        MenuItem delete = new MenuItem(menu, SWT.PUSH);
-        delete.setText("Delete");
-        delete.addListener(SWT.Selection, event -> delete());
+        menu.action("Rename...", this::rename);
+        menu.action("Delete", this::delete);
     }
 
     private void rename() {

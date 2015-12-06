@@ -16,12 +16,11 @@
 package org.tobi29.scapes.tools.tageditor.node;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.tobi29.scapes.engine.swt.util.widgets.Dialogs;
 import org.tobi29.scapes.engine.swt.util.widgets.InputDialog;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.utils.ArrayUtil;
 import org.tobi29.scapes.engine.utils.Pair;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
@@ -36,8 +35,7 @@ public abstract class AbstractStructureNode extends Node {
     protected final String name;
     protected final List<Pair<AbstractStructureNode, TagStructure>>
             childStructures = new ArrayList<>();
-    protected final List<ListNode>
-            childLists = new ArrayList<>();
+    protected final List<ListNode> childLists = new ArrayList<>();
     protected TagStructure tagStructure;
 
     protected AbstractStructureNode(TreeNode node, String name) {
@@ -72,44 +70,19 @@ public abstract class AbstractStructureNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
-        MenuItem add = new MenuItem(menu, SWT.CASCADE);
-        add.setText("Add");
-        Menu addMenu = new Menu(add);
-        add.setMenu(addMenu);
-        MenuItem addStructure = new MenuItem(addMenu, SWT.PUSH);
-        addStructure.setText("Structure");
-        addStructure.addListener(SWT.Selection, event -> addStructure());
-        MenuItem addList = new MenuItem(addMenu, SWT.PUSH);
-        addList.setText("List");
-        addList.addListener(SWT.Selection, event -> addList());
-        MenuItem addBoolean = new MenuItem(addMenu, SWT.PUSH);
-        addBoolean.setText("Boolean");
-        addBoolean.addListener(SWT.Selection, event -> addBoolean());
-        MenuItem addByte = new MenuItem(addMenu, SWT.PUSH);
-        addByte.setText("Byte...");
-        addByte.addListener(SWT.Selection, event -> addByte());
-        MenuItem addByteArray = new MenuItem(addMenu, SWT.PUSH);
-        addByteArray.setText("Byte[]...");
-        addByteArray.addListener(SWT.Selection, event -> addByteArray());
-        MenuItem addInt16 = new MenuItem(addMenu, SWT.PUSH);
-        addInt16.setText("Int16");
-        addInt16.addListener(SWT.Selection, event -> addInt16());
-        MenuItem addInt32 = new MenuItem(addMenu, SWT.PUSH);
-        addInt32.setText("Int32");
-        addInt32.addListener(SWT.Selection, event -> addInt32());
-        MenuItem addInt64 = new MenuItem(addMenu, SWT.PUSH);
-        addInt64.setText("Int64");
-        addInt64.addListener(SWT.Selection, event -> addInt64());
-        MenuItem addFloat32 = new MenuItem(addMenu, SWT.PUSH);
-        addFloat32.setText("Float32");
-        addFloat32.addListener(SWT.Selection, event -> addFloat32());
-        MenuItem addFloat64 = new MenuItem(addMenu, SWT.PUSH);
-        addFloat64.setText("Float64");
-        addFloat64.addListener(SWT.Selection, event -> addFloat64());
-        MenuItem addString = new MenuItem(addMenu, SWT.PUSH);
-        addString.setText("String");
-        addString.addListener(SWT.Selection, event -> addString());
+    public void rightClick(SmartMenu menu) {
+        SmartMenu add = menu.menu("Add");
+        add.action("Structure", this::addStructure);
+        add.action("List", this::addList);
+        add.action("Boolean...", this::addBoolean);
+        add.action("Byte...", this::addByte);
+        add.action("Byte[]...", this::addByteArray);
+        add.action("Int16...", this::addInt16);
+        add.action("Int32...", this::addInt32);
+        add.action("Int64...", this::addInt64);
+        add.action("Float32...", this::addFloat32);
+        add.action("Float64...", this::addFloat64);
+        add.action("String...", this::addString);
     }
 
     private void addStructure() {
@@ -329,9 +302,8 @@ public abstract class AbstractStructureNode extends Node {
 
     protected boolean checkValidAdd(String name) {
         if (tagStructure.has(name)) {
-            Dialogs.openMessage(node.getParent().getShell(),
-                    SWT.ICON_WARNING, "Failed to add",
-                    name + " already exists!");
+            Dialogs.openMessage(node.getParent().getShell(), SWT.ICON_WARNING,
+                    "Failed to add", name + " already exists!");
             return false;
         }
         return true;

@@ -15,10 +15,11 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.utils.io.ReadableByteStream;
+import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructureBinary;
@@ -28,36 +29,53 @@ import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Optional;
 
 public class FileStructureNode extends AbstractStructureNode {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(FileStructureNode.class);
-    protected final Path path;
+    protected final Optional<FilePath> path;
 
-    public FileStructureNode(Node parent, Path path,
-            TagStructure tagStructure) {
-        this(new TreeNode(parent.node, path.getFileName().toString(),
-                "File -> Structure"), path, tagStructure);
+    public FileStructureNode(Node parent, TagStructure tagStructure) {
+        this(parent, Optional.empty(), tagStructure);
     }
 
-    public FileStructureNode(TagEditorWidget tree, Path path,
-            TagStructure tagStructure) {
-        this(new TreeNode(tree, path.getFileName().toString(),
-                "File -> Structure"), path, tagStructure);
+    public FileStructureNode(TagEditorWidget tree, TagStructure tagStructure) {
+        this(tree, Optional.empty(), tagStructure);
     }
 
-    private FileStructureNode(TreeNode node, Path path,
+    public FileStructureNode(Node parent, FilePath path,
             TagStructure tagStructure) {
-        super(node, path.getFileName().toString());
+        this(parent, Optional.of(path), tagStructure);
+    }
+
+    public FileStructureNode(TagEditorWidget tree, FilePath path,
+            TagStructure tagStructure) {
+        this(tree, Optional.of(path), tagStructure);
+    }
+
+    public FileStructureNode(Node parent, Optional<FilePath> path,
+            TagStructure tagStructure) {
+        this(new TreeNode(parent.node, fileName(path), "File -> Structure"),
+                path, tagStructure);
+    }
+
+    public FileStructureNode(TagEditorWidget tree, Optional<FilePath> path,
+            TagStructure tagStructure) {
+        this(new TreeNode(tree, fileName(path), "File -> Structure"), path,
+                tagStructure);
+    }
+
+    private FileStructureNode(TreeNode node, Optional<FilePath> path,
+            TagStructure tagStructure) {
+        super(node, fileName(path));
         this.path = path;
         this.tagStructure = tagStructure;
         //node.setIcon(0, node.treeWidget().style()
         //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
-    public static Optional<TagStructure> structure(Path path) {
+    public static Optional<TagStructure> structure(FilePath path) {
         String name = path.getFileName().toString();
         TagStructureReader reader;
         if (name.endsWith(".stag")) {
@@ -78,6 +96,13 @@ public class FileStructureNode extends AbstractStructureNode {
         return Optional.empty();
     }
 
+    private static String fileName(Optional<FilePath> path) {
+        if (path.isPresent()) {
+            return path.get().getFileName().toString();
+        }
+        return "Unsaved Structure";
+    }
+
     public void init() {
         init(tagStructure);
     }
@@ -89,7 +114,7 @@ public class FileStructureNode extends AbstractStructureNode {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
         super.rightClick(menu);
         // TODO: Add right-click menu
     }

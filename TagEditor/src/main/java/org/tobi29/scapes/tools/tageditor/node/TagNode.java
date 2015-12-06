@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.tobi29.scapes.engine.swt.util.widgets.Dialogs;
 import org.tobi29.scapes.engine.swt.util.widgets.InputDialog;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.utils.ArrayUtil;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
@@ -79,7 +80,7 @@ public class TagNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
         MenuItem set = new MenuItem(menu, SWT.CASCADE);
         set.setText("Set");
         Menu setMenu = new Menu(set);

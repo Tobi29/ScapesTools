@@ -15,46 +15,46 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.utils.Pair;
+import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructureArchive;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileArchiveNode extends Node {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(FileArchiveNode.class);
-    protected final Path path;
+    protected final FilePath path;
     protected final List<Pair<ArchiveStructureNode, TagStructureArchive.Entry>>
             childStructures = new ArrayList<>();
     protected TagStructureArchive tagArchive;
 
-    public FileArchiveNode(Node parent, Path path) {
+    public FileArchiveNode(Node parent, FilePath path) {
         this(new TreeNode(parent.node, path.getFileName().toString(),
                 "File -> Archive"), path);
     }
 
-    public FileArchiveNode(TagEditorWidget tree, Path path) {
+    public FileArchiveNode(TagEditorWidget tree, FilePath path) {
         this(new TreeNode(tree, path.getFileName().toString(),
                 "File -> Archive"), path);
     }
 
-    private FileArchiveNode(TreeNode node, Path path) {
+    private FileArchiveNode(TreeNode node, FilePath path) {
         super(node);
         this.path = path;
         //node.setIcon(0, node.treeWidget().style()
         //        .standardIcon(QStyle.StandardPixmap.SP_DirIcon));
     }
 
-    public static boolean archive(Path path) {
+    public static boolean archive(FilePath path) {
         String name = path.getFileName().toString();
         return name.endsWith(".star");
     }
@@ -95,7 +95,7 @@ public class FileArchiveNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
         // TODO: Add right-click menu
     }
 }

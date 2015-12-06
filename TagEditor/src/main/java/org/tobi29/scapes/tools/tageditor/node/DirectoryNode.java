@@ -15,16 +15,16 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
+import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
+import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,22 +32,22 @@ import java.util.Optional;
 public class DirectoryNode extends Node {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(DirectoryNode.class);
-    protected final Path path;
+    protected final FilePath path;
     protected final List<DirectoryNode> childDirectories = new ArrayList<>();
     protected final List<FileStructureNode> childStructures = new ArrayList<>();
     protected final List<FileArchiveNode> childArchives = new ArrayList<>();
 
-    public DirectoryNode(Node parent, Path path) {
-        this(new TreeNode(parent.node, path.getFileName().toString(),
+    public DirectoryNode(Node parent, FilePath path) {
+        this(new TreeNode(parent.node, String.valueOf(path.getFileName()),
                 "Directory"), path);
     }
 
-    public DirectoryNode(TagEditorWidget tree, Path path) {
-        this(new TreeNode(tree, path.getFileName().toString(), "Directory"),
-                path);
+    public DirectoryNode(TagEditorWidget tree, FilePath path) {
+        this(new TreeNode(tree, String.valueOf(path.getFileName()),
+                "Directory"), path);
     }
 
-    private DirectoryNode(TreeNode node, Path path) {
+    private DirectoryNode(TreeNode node, FilePath path) {
         super(node);
         this.path = path;
         //node.setIcon(0, node.treeWidget().style()
@@ -56,10 +56,10 @@ public class DirectoryNode extends Node {
 
     public void init() {
         try {
-            Files.list(path).sorted().forEach(child -> {
-                if (Files.isDirectory(child)) {
+            FileUtil.stream(path, stream -> stream.forEach(child -> {
+                if (FileUtil.isDirectory(child)) {
                     childDirectories.add(new DirectoryNode(this, child));
-                } else if (Files.isRegularFile(child)) {
+                } else if (FileUtil.isRegularFile(child)) {
                     Optional<TagStructure> tagStructure =
                             FileStructureNode.structure(child);
                     if (tagStructure.isPresent()) {
@@ -73,7 +73,7 @@ public class DirectoryNode extends Node {
                         }
                     }
                 }
-            });
+            }));
         } catch (IOException e) {
             LOGGER.error("Failed to expand directory node", e);
         }
@@ -90,6 +90,6 @@ public class DirectoryNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
     }
 }

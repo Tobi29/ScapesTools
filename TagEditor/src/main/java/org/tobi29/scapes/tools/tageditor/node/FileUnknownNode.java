@@ -15,25 +15,24 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
-import org.eclipse.swt.widgets.Menu;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
+import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
-import java.nio.file.Path;
-
 public class FileUnknownNode extends Node {
-    protected final Path path;
+    protected final FilePath path;
 
-    public FileUnknownNode(Node parent, Path path) {
+    public FileUnknownNode(Node parent, FilePath path) {
         this(new TreeNode(parent.node, path.getFileName().toString(), "File"),
                 path);
     }
 
-    public FileUnknownNode(TagEditorWidget tree, Path path) {
+    public FileUnknownNode(TagEditorWidget tree, FilePath path) {
         this(new TreeNode(tree, path.getFileName().toString(), "File"), path);
     }
 
-    private FileUnknownNode(TreeNode node, Path path) {
+    private FileUnknownNode(TreeNode node, FilePath path) {
         super(node);
         this.path = path;
         //node.setIcon(0, node.treeWidget().style()
@@ -45,6 +44,6 @@ public class FileUnknownNode extends Node {
     }
 
     @Override
-    public void rightClick(Menu menu) {
+    public void rightClick(SmartMenu menu) {
     }
 }

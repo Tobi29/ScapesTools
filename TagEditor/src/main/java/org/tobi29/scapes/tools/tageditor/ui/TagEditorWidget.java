@@ -22,6 +22,7 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 
 import java.util.Arrays;
 
@@ -31,14 +32,11 @@ public class TagEditorWidget extends Tree {
         setHeaderVisible(true);
         TreeColumn name = new TreeColumn(this, SWT.LEFT);
         name.setText("Name");
-        name.setWidth(400);
         TreeColumn value = new TreeColumn(this, SWT.LEFT);
         value.setText("Value");
-        value.setWidth(200);
         TreeColumn type = new TreeColumn(this, SWT.LEFT);
         type.setText("Type");
-        type.setWidth(200);
-        Menu menu = new Menu(this);
+        SmartMenu menu = new SmartMenu(this);
         setMenu(menu);
         menu.addMenuListener(new MenuAdapter() {
             @Override
@@ -62,6 +60,11 @@ public class TagEditorWidget extends Tree {
                 type.setWidth(200);
             }
         });
+        addListener(SWT.Expand, event -> expanded(event.item));
+    }
+
+    public void expanded(Widget item) {
+        ((TreeNode) item).node.expand();
     }
 
     @Override

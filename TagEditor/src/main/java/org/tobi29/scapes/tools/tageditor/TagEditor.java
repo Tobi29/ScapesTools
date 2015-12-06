@@ -15,28 +15,23 @@
  */
 package org.tobi29.scapes.tools.tageditor;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Widget;
-import org.tobi29.scapes.engine.swt.util.framework.Application;
-import org.tobi29.scapes.tools.tageditor.node.DirectoryNode;
-import org.tobi29.scapes.tools.tageditor.ui.TagEditorWindow;
-import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
+import org.eclipse.swt.widgets.FileDialog;
+import org.tobi29.scapes.engine.swt.util.Shortcut;
+import org.tobi29.scapes.engine.swt.util.framework.MultiDocumentApplication;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
+import org.tobi29.scapes.engine.swt.util.widgets.SmartMenuBar;
+import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
+import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
+import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
+import org.tobi29.scapes.tools.tageditor.node.FileStructureNode;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Optional;
 
-public class TagEditor extends Application {
-    private final TagEditorWindow shell;
-
+public class TagEditor extends MultiDocumentApplication {
     public TagEditor() {
         super("Scapes Tag Editor", "TagEditor", "0.0.0_1");
-        shell = new TagEditorWindow(display, SWT.SHELL_TRIM);
-        shell.editorWidget
-                .addListener(SWT.Expand, event -> expanded(event.item));
-        //shell.fileOpenFile.addListener(SWT.Selection, event -> fileOpenFile());
-        shell.fileOpenDirectory
-                .addListener(SWT.Selection, event -> fileOpenDirectory());
     }
 
     public static void main(String[] args) {
@@ -45,47 +40,55 @@ public class TagEditor extends Application {
 
     @Override
     protected void init() {
-        shell.open();
+        openTab(new StructureDocument());
     }
 
     @Override
     protected void dispose() {
     }
 
-    public void expanded(Widget item) {
-        ((TreeNode) item).node.expand();
-    }
-
-    /*public void fileOpenFile() {
-        String file = QFileDialog.getOpenFileName(shell, "Open File...", "",
-                new QFileDialog.Filter("Tag Structure (*.stag *.json *.xml)"));
-        if (file.isEmpty()) {
-            return;
-        }
-        shell.editorWidget.clear();
-        Path path = Paths.get(file);
-        Optional<TagStructure> tagStructure = FileStructureNode.structure(path);
-        if (tagStructure.isPresent()) {
-            new FileStructureNode(shell.editorWidget, path, tagStructure.get())
-                    .init();
-        } else {
-            if (FileArchiveNode.archive(path)) {
-                new FileArchiveNode(shell.editorWidget, path).init();
-            } else {
-                new FileUnknownNode(shell.editorWidget, path);
-            }
-        }
-    }*/
-
-    public void fileOpenDirectory() {
-        DirectoryDialog dialog = new DirectoryDialog(shell);
-        dialog.setMessage("Open Directory...");
+    public void fileOpenFile(Composite composite) {
+        FileDialog dialog = new FileDialog(composite.getShell());
+        dialog.setText("Open File...");
+        dialog.setFilterExtensions(
+                new String[]{"*.stag;*.json;*.xml", "*.star"});
+        dialog.setFilterNames(
+                new String[]{"Tag Structure", "Tag Structure Archive"});
         String file = dialog.open();
         if (file == null) {
             return;
         }
-        shell.editorWidget.removeAll();
-        Path path = Paths.get(file);
-        new DirectoryNode(shell.editorWidget, path).init();
+        FilePath path = FileUtil.path(file);
+        Optional<TagStructure> tagStructure = FileStructureNode.structure(path);
+        if (tagStructure.isPresent()) {
+            openNewShell(composite, new StructureDocument(path));
+        } else {
+            //if (FileArchiveNode.archive(path)) {
+            //    new FileArchiveNode(shell.editorWidget, path).init();
+            //} else {
+            //new FileUnknownNode(shell.editorWidget, path);
+            //}
+        }
+    }
+
+    public void fileOpenDirectory(Composite composite) {
+        DirectoryDialog dialog = new DirectoryDialog(composite.getShell());
+        dialog.setText("Open Directory...");
+        String file = dialog.open();
+        if (file == null) {
+            return;
+        }
+        FilePath path = FileUtil.path(file);
+        openNewShell(composite, new DirectoryDocument(path));
+    }
+
+    @Override
+    protected void populate(Composite composite, SmartMenuBar menu) {
+        SmartMenu file = menu.menu("File");
+        file.action("Open File...", () -> fileOpenFile(composite),
+                Shortcut.get("File.OpenFile", 'O', Shortcut.Modifier.CONTROL));
+        file.action("Open Directory...", () -> fileOpenDirectory(composite),
+                Shortcut.get("File.OpenDirectory", 'O',
+                        Shortcut.Modifier.CONTROL, Shortcut.Modifier.SHIFT));
     }
 }
