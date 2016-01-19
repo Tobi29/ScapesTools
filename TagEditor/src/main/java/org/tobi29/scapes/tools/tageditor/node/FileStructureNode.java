@@ -22,9 +22,9 @@ import org.tobi29.scapes.engine.utils.io.ReadableByteStream;
 import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
-import org.tobi29.scapes.engine.utils.io.tag.TagStructureBinary;
-import org.tobi29.scapes.engine.utils.io.tag.TagStructureJSON;
-import org.tobi29.scapes.engine.utils.io.tag.TagStructureXML;
+import org.tobi29.scapes.engine.utils.io.tag.binary.TagStructureBinary;
+import org.tobi29.scapes.engine.utils.io.tag.json.TagStructureJSON;
+import org.tobi29.scapes.engine.utils.io.tag.xml.TagStructureXML;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 

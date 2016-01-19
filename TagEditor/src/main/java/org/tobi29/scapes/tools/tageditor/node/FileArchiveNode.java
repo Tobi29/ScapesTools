@@ -21,7 +21,7 @@ import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.utils.Pair;
 import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
-import org.tobi29.scapes.engine.utils.io.tag.TagStructureArchive;
+import org.tobi29.scapes.engine.utils.io.tag.binary.TagStructureArchive;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 
