@@ -22,6 +22,7 @@ import org.tobi29.scapes.engine.swt.util.Shortcut;
 import org.tobi29.scapes.engine.swt.util.framework.MultiDocumentApplication;
 import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
 import org.tobi29.scapes.engine.swt.util.widgets.SmartMenuBar;
+import org.tobi29.scapes.engine.utils.VersionUtil;
 import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
@@ -31,7 +32,7 @@ import java.util.Optional;
 
 public class TagEditor extends MultiDocumentApplication {
     public TagEditor() {
-        super("Scapes Tag Editor", "TagEditor", "0.0.0_1");
+        super("Scapes Tag Editor", "TagEditor", VersionUtil.of("0.0.0_1"));
     }
 
     public static void main(String[] args) {
