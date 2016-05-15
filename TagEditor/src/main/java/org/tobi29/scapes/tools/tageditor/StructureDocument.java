@@ -53,6 +53,10 @@ public class StructureDocument extends Document {
     }
 
     @Override
+    public void destroy() {
+    }
+
+    @Override
     protected String title() {
         return path.map(String::valueOf).orElse("Untitled");
     }
@@ -65,7 +69,8 @@ public class StructureDocument extends Document {
 
     @Override
     protected boolean empty() {
-        return !path.isPresent();
+        return false;
+        //return !path.isPresent();
     }
 
     @Override

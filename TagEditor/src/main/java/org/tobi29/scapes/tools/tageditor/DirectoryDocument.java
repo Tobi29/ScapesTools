@@ -24,6 +24,10 @@ public class DirectoryDocument extends Document {
     }
 
     @Override
+    public void destroy() {
+    }
+
+    @Override
     protected String title() {
         return String.valueOf(path);
     }

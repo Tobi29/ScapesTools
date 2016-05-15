@@ -42,6 +42,8 @@ public class TagEditor extends MultiDocumentApplication {
     @Override
     protected void init() {
         openTab(new StructureDocument());
+        openTab(new StructureDocument());
+        openTab(new StructureDocument());
     }
 
     @Override
@@ -62,7 +64,7 @@ public class TagEditor extends MultiDocumentApplication {
         FilePath path = FileUtil.path(file);
         Optional<TagStructure> tagStructure = FileStructureNode.structure(path);
         if (tagStructure.isPresent()) {
-            openNewShell(composite, new StructureDocument(path));
+            openNewTab(composite, new StructureDocument(path));
         } else {
             //if (FileArchiveNode.archive(path)) {
             //    new FileArchiveNode(shell.editorWidget, path).init();
@@ -80,7 +82,7 @@ public class TagEditor extends MultiDocumentApplication {
             return;
         }
         FilePath path = FileUtil.path(file);
-        openNewShell(composite, new DirectoryDocument(path));
+        openNewTab(composite, new DirectoryDocument(path));
     }
 
     @Override
