@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 apply from: "$rootDir/ScapesEngine/resources/scapesengineapplication.gradle"
+apply from: "$rootDir/ScapesEngine/SWTUtils/swt.gradle"
 
 version = "0.0.0_1"
 
@@ -28,12 +29,8 @@ application {
 }
 
 dependencies {
-    compile project(":ScapesEngine:SWTUtils")
     compile project(":ScapesEngine:Utils:TagStructureJSON")
     compile project(":ScapesEngine:Utils:TagStructureXML")
-    compile "org.slf4j:slf4j-api:1.7.13"
-
-    compileOnly "org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.5.2"
 
     testCompile "junit:junit:4.12"
 
@@ -41,16 +38,4 @@ dependencies {
     runtime "org.apache.logging.log4j:log4j-api:2.4.1"
     runtime "org.apache.logging.log4j:log4j-core:2.4.1"
     runtime "org.apache.logging.log4j:log4j-slf4j-impl:2.4.1"
-
-    runtimeLinux32 "org.eclipse.swt:org.eclipse.swt.gtk.linux.x86:4.5.2"
-    runtimeLinux64 "org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.5.2"
-    runtimeMacOSX "org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.5.2"
-    runtimeWindows32 "org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.5.2"
-    runtimeWindows64 "org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.5.2"
-
-    nativesLinux32 "org.eclipse.swt:org.eclipse.swt.gtk.linux.x86:4.5.2"
-    nativesLinux64 "org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.5.2"
-    nativesMacOSX "org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.5.2"
-    nativesWindows32 "org.eclipse.swt:org.eclipse.swt.win32.win32.x86:4.5.2"
-    nativesWindows64 "org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.5.2"
 }
