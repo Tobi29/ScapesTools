@@ -15,6 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor;
 
+import java8.util.Optional;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
@@ -28,8 +29,6 @@ import org.tobi29.scapes.engine.utils.io.filesystem.FileUtil;
 import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.tools.tageditor.node.FileStructureNode;
 
-import java.util.Optional;
-
 public class TagEditor extends MultiDocumentApplication {
     public TagEditor() {
         super("Scapes Tag Editor", "TagEditor", VersionUtil.of("0.0.0_1"));
@@ -41,8 +40,6 @@ public class TagEditor extends MultiDocumentApplication {
 
     @Override
     protected void init() {
-        openTab(new StructureDocument());
-        openTab(new StructureDocument());
         openTab(new StructureDocument());
     }
 
@@ -62,7 +59,8 @@ public class TagEditor extends MultiDocumentApplication {
             return;
         }
         FilePath path = FileUtil.path(file);
-        Optional<TagStructure> tagStructure = FileStructureNode.structure(path);
+        Optional<TagStructure> tagStructure =
+                FileStructureNode.structure(path);
         if (tagStructure.isPresent()) {
             openNewTab(composite, new StructureDocument(path));
         } else {

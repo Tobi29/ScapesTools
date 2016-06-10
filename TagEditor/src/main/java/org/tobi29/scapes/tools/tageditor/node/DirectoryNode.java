@@ -15,6 +15,7 @@
  */
 package org.tobi29.scapes.tools.tageditor.node;
 
+import java8.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tobi29.scapes.engine.swt.util.widgets.SmartMenu;
@@ -27,7 +28,6 @@ import org.tobi29.scapes.tools.tageditor.ui.TreeNode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DirectoryNode extends Node {
     private static final Logger LOGGER =

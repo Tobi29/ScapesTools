@@ -12,7 +12,7 @@ import org.tobi29.scapes.engine.utils.io.filesystem.FilePath;
 import org.tobi29.scapes.tools.tageditor.node.DirectoryNode;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 
-public class DirectoryDocument extends Document {
+public class DirectoryDocument implements Document {
     private final FilePath path;
 
     public DirectoryDocument(FilePath path) {
@@ -28,22 +28,17 @@ public class DirectoryDocument extends Document {
     }
 
     @Override
-    protected String title() {
+    public String title() {
         return String.valueOf(path);
     }
 
     @Override
-    protected String shortTitle() {
+    public String shortTitle() {
         return String.valueOf(path.getFileName());
     }
 
     @Override
-    protected boolean empty() {
-        return false;
-    }
-
-    @Override
-    protected void populate(Composite composite, SmartMenuBar menu,
+    public void populate(Composite composite, SmartMenuBar menu,
             MultiDocumentApplication application) {
         Menu file = menu.menu("File");
         MenuItem fileClose = new MenuItem(file, SWT.PUSH);

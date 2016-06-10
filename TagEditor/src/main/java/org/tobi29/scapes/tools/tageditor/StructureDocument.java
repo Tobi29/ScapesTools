@@ -1,5 +1,6 @@
 package org.tobi29.scapes.tools.tageditor;
 
+import java8.util.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -13,9 +14,7 @@ import org.tobi29.scapes.engine.utils.io.tag.TagStructure;
 import org.tobi29.scapes.tools.tageditor.node.FileStructureNode;
 import org.tobi29.scapes.tools.tageditor.ui.TagEditorWidget;
 
-import java.util.Optional;
-
-public class StructureDocument extends Document {
+public class StructureDocument implements Document {
     private final Optional<FilePath> path;
     private final TagStructure tagStructure;
 
@@ -57,24 +56,23 @@ public class StructureDocument extends Document {
     }
 
     @Override
-    protected String title() {
+    public String title() {
         return path.map(String::valueOf).orElse("Untitled");
     }
 
     @Override
-    protected String shortTitle() {
+    public String shortTitle() {
         return path.map(FilePath::getFileName).map(String::valueOf)
                 .orElse("Untitled");
     }
 
     @Override
-    protected boolean empty() {
-        return false;
-        //return !path.isPresent();
+    public boolean empty() {
+        return !path.isPresent();
     }
 
     @Override
-    protected void populate(Composite composite, SmartMenuBar menu,
+    public void populate(Composite composite, SmartMenuBar menu,
             MultiDocumentApplication application) {
         Menu file = menu.menu("File");
         MenuItem fileClose = new MenuItem(file, SWT.PUSH);
