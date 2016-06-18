@@ -28,4 +28,5 @@ Closure subProjects = { root ->
 
 apply from: "ScapesEngine/include.gradle"
 
+include "ControlPanel"
 include "TagEditor"
